@@ -38,7 +38,7 @@ public class JmsConsumer implements MessageListener {
             log.info(Actions.CREATE_AND_START_WORKFLOW.toString());
             if (broadcastMessage.getWorkflowInfo().getAction().equals(Actions.CREATE_AND_START_WORKFLOW.toString())) {
             	//ProcessInstance processInstance = processService.startProcess(broadcastMessage.getWorkflowInfo());
-            	log.info(">>>>>> ProcessInstance: "+"processInstance");
+            	//log.info(">>>>>> ProcessInstance: "+processInstance);
             }
         } catch(Exception e) {
         	log.info(">>>>>> Received Exception while processing message: "+ e);

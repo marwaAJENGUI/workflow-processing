@@ -8,11 +8,25 @@ spring:
       #- com.example.activemq
   jms:
     pub-sub-domain: true
+  
+  # database connection config
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://localhost:3306/workflow?useLegacyDatetimeCode=false&serverTimezone=UTC
     username: root
     password: root
+  
+  # activiti default configuration
+  activiti:
+    database-schema-update: true
+    db-history-used: true
+    check-process-definitions: true
+    process-definition-location-prefix: classpath:/processes/
+    # process-definition-location-suffixes:
+    # - **.bpmn
+    # - **.bpmn20.xml
+    history-level: audit
+
 topic: workflow
       #?consumer.retroactive=true
 server:
