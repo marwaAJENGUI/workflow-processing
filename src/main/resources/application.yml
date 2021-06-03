@@ -1,0 +1,16 @@
+spring:
+  activemq:
+    broker-url: tcp://localhost:61616
+          #?jms.useAsyncSend=true
+    packages:
+      trusted:
+      - com.example.activemq
+  jms:
+    pub-sub-domain: true
+
+active-mq:
+    topic: workflow
+      #?consumer.retroactive=true
+server:
+  port: 8770
+
