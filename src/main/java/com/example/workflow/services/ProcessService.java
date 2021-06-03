@@ -1,6 +1,7 @@
 package com.example.workflow.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.activiti.api.process.model.ProcessInstance;
 import org.activiti.api.process.model.builders.ProcessPayloadBuilder;
 import org.activiti.api.process.runtime.ProcessRuntime;
@@ -9,6 +10,7 @@ import com.example.workflow.model.WorkflowInfo;
 
 import lombok.extern.log4j.Log4j;
 @Log4j
+@Service
 public class ProcessService {
 
     @Autowired
