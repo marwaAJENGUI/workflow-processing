@@ -3,13 +3,17 @@ spring:
     broker-url: tcp://localhost:61616
           #?jms.useAsyncSend=true
     packages:
-      trusted:
-      - com.example.activemq
+      trust-all: true
+      #trusted:
+      #- com.example.activemq
   jms:
     pub-sub-domain: true
-
-active-mq:
-    topic: workflow
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/workflow?useLegacyDatetimeCode=false&serverTimezone=UTC
+    username: root
+    password: root
+topic: workflow
       #?consumer.retroactive=true
 server:
   port: 8770
