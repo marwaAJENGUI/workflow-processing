@@ -25,5 +25,15 @@ public class WorkflowInfo implements Serializable{
 	String filePath;
 	boolean draft;
 	String action;
-	
+	String extension;
+
+
+public String getDirPath(){
+    String file = (this.draft)?"draft":"valid";
+    return "\\Workflow\\"+this.customer+"\\"+this.module+"\\"+file;
+}
+public String getFilePath(){
+    String file = (this.draft)?"draft":"valid";
+    return "\\Workflow\\"+this.customer+"\\"+this.module+"\\"+file+"\\"+this.name+"_"+this.version+this.extension;
+}	
 }

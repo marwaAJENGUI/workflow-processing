@@ -15,13 +15,15 @@ public class ProcessService {
 
     @Autowired
     private ProcessRuntime processRuntime;
+    @Autowired
+    private FileService fileService;
     
     public ProcessInstance startProcess(WorkflowInfo workflowInfo) {
-		String workflowPath = "..\\send-to-topic\\src\\main\\resources"+workflowInfo.getFilePath();
-		log.info(">>>>>>>>>>> basePath: "+workflowPath);
+		log.debug(">>>>>>>>>>> ProcessRuntime -> : ProcessInstance("+workflowInfo.getName()+"_"+workflowInfo.getVersion()+"): start");
+		fileService.copyXmlFile(workflowInfo.getFilePath(),workflowInfo.getDirPath());
 		return processRuntime.start(ProcessPayloadBuilder
                 .start()
-                .withProcessDefinitionKey("userRegistrationProcess")
+                .withProcessDefinitionKey(workflowInfo.getName())
                 .build());
     }
 }
