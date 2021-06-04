@@ -23,7 +23,7 @@ spring:
     database-schema-update: true
     db-history-used: true
     check-process-definitions: true
-    process-definition-location-prefix: classpath:/Workflow
+    #process-definition-location-prefix: classpath:/Workflow
     # process-definition-location-suffixes:
     # - **.bpmn
     # - **.bpmn20.xml
