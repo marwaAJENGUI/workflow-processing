@@ -17,7 +17,9 @@ spring:
     password: root
   security:    user:      name: admin
       password: password
-      
+  resources:
+    static-locations:
+      file:/Workflow/**/**/**    
   # activiti default configuration
   activiti:
     database-schema-update: true

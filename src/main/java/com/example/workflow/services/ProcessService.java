@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipInputStream;
 
 import org.activiti.api.process.model.ProcessInstance;
@@ -36,23 +37,25 @@ public class ProcessService {
     @Autowired
     ProcessEngine processEngine;
     @Autowired
-    //ApplicationContext applicationContext;
     ResourceLoader resourceLoder;
+    //ApplicationContext applicationContext;
     //@Deployment(resources = { "/JobCollectionResourceTest.testTimerProcess.bpmn20.xml" })
-    public ProcessInstance startProcess(WorkflowInfo workflowInfo) throws FileNotFoundException {
+    public ProcessInstance startProcess(WorkflowInfo workflowInfo) throws FileNotFoundException, InterruptedException {
 		String fileName=workflowInfo.getName()+"_"+workflowInfo.getVersion();
     	log.debug(">>>>>>>>>>> ProcessService -> : startProcess(workflowInfo): start ...");
     	String localFilePath=fileService.copyXmlFile(workflowInfo.getFilePath(),workflowInfo.getDirPath());
-		ZipInputStream inputStream = new ZipInputStream(new FileInputStream(localFilePath));
-		RepositoryService repositoryService = processEngine.getRepositoryService();
+		//ZipInputStream inputStream = new ZipInputStream(new FileInputStream(localFilePath));
 		//InputStream inputstream = new FileInputStream(workflowInfo.getFilePath());
 		//new ClassPathResource(workflowInfo.getFilePath());
 		//log.info(">>>>>>>>>>>classpath :"+applicationContext.getResource(workflowInfo.getFilePath()));
-		log.info(resourceLoder.getResource("file:"+System.getProperty("user.dir") + "\\src\\main\\resources\\"+workflowInfo.getFilePath()));
+		//log.info(resourceLoder.getResource("file:"+System.getProperty("user.dir") + "\\src\\main\\resources\\"+workflowInfo.getFilePath()));
+		log.info("Manual Debug 1 ==>"  + workflowInfo.getFilePath());
+		log.info("Manual Debug 2 ==>");
+		TimeUnit.SECONDS.sleep(15);
+		RepositoryService repositoryService = processEngine.getRepositoryService();
 		DeploymentEntity deployment=(DeploymentEntity)repositoryService.createDeployment()
-				  .addClasspathResource(workflowInfo.getFilePath())
-				  //.addClasspathResource("Workflow\\Orange\\Project Details\\valid\\workflow_test_1622806291108.bpmn20.xml")
-				  .deploy();
+			  .addClasspathResource(workflowInfo.getFilePath())
+			  .deploy();
     	log.info(">>>>>>>>>>> ProcessService -> : startProcess(workflowInfo): DeploymentEntity deployment = "+deployment);
 		return processRuntime.start(ProcessPayloadBuilder
 				.start()
