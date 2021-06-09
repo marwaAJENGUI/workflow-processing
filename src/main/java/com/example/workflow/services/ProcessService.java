@@ -54,7 +54,7 @@ public class ProcessService {
 		//log.info(resourceLoder.getResource("file:"+System.getProperty("user.dir") + "\\src\\main\\resources\\"+workflowInfo.getFilePath()));
 		log.info("Manual Debug 1 ==>"  + workflowInfo.getFilePath());
 		log.info("Manual Debug 2 ==>");
-		TimeUnit.SECONDS.sleep(15);
+		//TimeUnit.SECONDS.sleep(15);
 		/*RepositoryService repositoryService = processEngine.getRepositoryService();
 		DeploymentEntity deployment=(DeploymentEntity)repositoryService.createDeployment()
 			  .addClasspathResource(workflowInfo.getFilePath())
@@ -70,11 +70,11 @@ public class ProcessService {
 		processEngine = ProcessEngines.getDefaultProcessEngine();
 		// Create repository service and deploy with process xml.
 		RepositoryService repositoryService = processEngine.getRepositoryService();
-
+		log.debug("repositoryService :"+ repositoryService);
 		try {
-		DeploymentEntity dep=(DeploymentEntity)repositoryService.createDeployment().tenantId("tenantId1")
+		DeploymentEntity dep=(DeploymentEntity)repositoryService.createDeployment()
 		.addInputStream(fullFileName,
-		new FileInputStream(new File("C:\\Users\\Marwa\\Documents\\workspace-spring-tool-suite-4-4.9.0.RELEASE\\send-to-topic\\src\\main\\resources\\"+workflowInfo.getFilePath())))
+		new FileInputStream(new File(System.getProperty("user.dir") + "\\src\\main\\resources\\"+workflowInfo.getFilePath())))
 		.deploy();
 		log.info("dep :"+ dep);
 		} catch (FileNotFoundException e) {
@@ -87,7 +87,7 @@ public class ProcessService {
 		RuntimeService runtimeService = processEngine.getRuntimeService();
 
 
-		org.activiti.engine.runtime.ProcessInstance processInstance = runtimeService.startProcessInstanceByKeyAndTenantId(workflowInfo.getName(), "tenantId1");
+		org.activiti.engine.runtime.ProcessInstance processInstance = runtimeService.startProcessInstanceByKey(workflowInfo.getName());
 		return null;
     }
 }
