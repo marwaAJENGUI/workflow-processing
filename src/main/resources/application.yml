@@ -12,14 +12,14 @@ spring:
   # database connection config
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/test?useLegacyDatetimeCode=false&serverTimezone=UTC
+    url: jdbc:mysql://localhost:3306/workflow?useLegacyDatetimeCode=false&serverTimezone=UTC
     username: root
     password: root
   security:    user:      name: admin
       password: password
-  resources:
-    static-locations:
-      file:/Workflow/**/**/**    
+  #resources:
+   # static-locations:
+    #  file:/Workflow/**/**/**    
   # activiti default configuration
   activiti:
     database-schema-update: true
@@ -29,6 +29,7 @@ spring:
     # process-definition-location-suffixes:
     # - **.bpmn
     # - **.bpmn20.xml
+    asyncExecutorActivate: true
     history-level: audit
 logging:  level:
     com.example.workflow:

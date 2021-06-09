@@ -7,6 +7,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -23,8 +24,8 @@ import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.RepositoryService;
 //import org.activiti.engine.repository.DeploymentBuilder;
 import org.activiti.engine.impl.persistence.entity.DeploymentEntity;
-
-
+import org.activiti.engine.ProcessEngines;
+import org.activiti.engine.RuntimeService;
 import lombok.extern.log4j.Log4j;
 @Log4j
 @Service
@@ -38,10 +39,12 @@ public class ProcessService {
     ProcessEngine processEngine;
     @Autowired
     ResourceLoader resourceLoder;
+    
     //ApplicationContext applicationContext;
     //@Deployment(resources = { "/JobCollectionResourceTest.testTimerProcess.bpmn20.xml" })
     public ProcessInstance startProcess(WorkflowInfo workflowInfo) throws FileNotFoundException, InterruptedException {
 		String fileName=workflowInfo.getName()+"_"+workflowInfo.getVersion();
+		String fullFileName=workflowInfo.getName()+"_"+workflowInfo.getVersion()+workflowInfo.getExtension();
     	log.debug(">>>>>>>>>>> ProcessService -> : startProcess(workflowInfo): start ...");
     	String localFilePath=fileService.copyXmlFile(workflowInfo.getFilePath(),workflowInfo.getDirPath());
 		//ZipInputStream inputStream = new ZipInputStream(new FileInputStream(localFilePath));
@@ -52,9 +55,10 @@ public class ProcessService {
 		log.info("Manual Debug 1 ==>"  + workflowInfo.getFilePath());
 		log.info("Manual Debug 2 ==>");
 		TimeUnit.SECONDS.sleep(15);
-		RepositoryService repositoryService = processEngine.getRepositoryService();
+		/*RepositoryService repositoryService = processEngine.getRepositoryService();
 		DeploymentEntity deployment=(DeploymentEntity)repositoryService.createDeployment()
 			  .addClasspathResource(workflowInfo.getFilePath())
+			  .tenantId("aaaaaaaa")
 			  .deploy();
     	log.info(">>>>>>>>>>> ProcessService -> : startProcess(workflowInfo): DeploymentEntity deployment = "+deployment);
 		return processRuntime.start(ProcessPayloadBuilder
@@ -62,5 +66,28 @@ public class ProcessService {
 				.withProcessDefinitionKey(workflowInfo.getName())
                 .build()
                 );
+		*/
+		processEngine = ProcessEngines.getDefaultProcessEngine();
+		// Create repository service and deploy with process xml.
+		RepositoryService repositoryService = processEngine.getRepositoryService();
+
+		try {
+		DeploymentEntity dep=(DeploymentEntity)repositoryService.createDeployment().tenantId("tenantId1")
+		.addInputStream(fullFileName,
+		new FileInputStream(new File("C:\\Users\\Marwa\\Documents\\workspace-spring-tool-suite-4-4.9.0.RELEASE\\send-to-topic\\src\\main\\resources\\"+workflowInfo.getFilePath())))
+		.deploy();
+		log.info("dep :"+ dep);
+		} catch (FileNotFoundException e) {
+		System.out.println("Error");
+		e.printStackTrace();
+		}
+		TimeUnit.SECONDS.sleep(15);
+		// Everything related to the runtime state of processes can be found in
+		// the RuntimeService.
+		RuntimeService runtimeService = processEngine.getRuntimeService();
+
+
+		org.activiti.engine.runtime.ProcessInstance processInstance = runtimeService.startProcessInstanceByKeyAndTenantId(workflowInfo.getName(), "tenantId1");
+		return null;
     }
 }
