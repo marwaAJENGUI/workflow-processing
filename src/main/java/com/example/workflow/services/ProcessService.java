@@ -39,12 +39,11 @@ public class ProcessService {
     ProcessEngine processEngine;
     @Autowired
     ResourceLoader resourceLoder;
-    
+    @Autowired
+    RepositoryService repositoryService;
     //ApplicationContext applicationContext;
     //@Deployment(resources = { "/JobCollectionResourceTest.testTimerProcess.bpmn20.xml" })
     public ProcessInstance startProcess(WorkflowInfo workflowInfo) throws FileNotFoundException, InterruptedException {
-		String fileName=workflowInfo.getName()+"_"+workflowInfo.getVersion();
-		String fullFileName=workflowInfo.getName()+"_"+workflowInfo.getVersion()+workflowInfo.getExtension();
     	log.debug(">>>>>>>>>>> ProcessService -> : startProcess(workflowInfo): start ...");
     	String localFilePath=fileService.copyXmlFile(workflowInfo.getFilePath(),workflowInfo.getDirPath());
 		//ZipInputStream inputStream = new ZipInputStream(new FileInputStream(localFilePath));
@@ -54,20 +53,23 @@ public class ProcessService {
 		//log.info(resourceLoder.getResource("file:"+System.getProperty("user.dir") + "\\src\\main\\resources\\"+workflowInfo.getFilePath()));
 		log.info("Manual Debug 1 ==>"  + workflowInfo.getFilePath());
 		log.info("Manual Debug 2 ==>");
-		//TimeUnit.SECONDS.sleep(15);
-		/*RepositoryService repositoryService = processEngine.getRepositoryService();
+		TimeUnit.SECONDS.sleep(15);
+		
 		DeploymentEntity deployment=(DeploymentEntity)repositoryService.createDeployment()
 			  .addClasspathResource(workflowInfo.getFilePath())
-			  .tenantId("aaaaaaaa")
 			  .deploy();
     	log.info(">>>>>>>>>>> ProcessService -> : startProcess(workflowInfo): DeploymentEntity deployment = "+deployment);
+		
 		return processRuntime.start(ProcessPayloadBuilder
 				.start()
 				.withProcessDefinitionKey(workflowInfo.getName())
                 .build()
                 );
-		*/
+		
+		/*
 		processEngine = ProcessEngines.getDefaultProcessEngine();
+		String fullFileName=workflowInfo.getName()+"_"+workflowInfo.getVersion()+workflowInfo.getExtension();		
+		log.debug(processEngine.getProcessEngineConfiguration().getClassLoader());
 		// Create repository service and deploy with process xml.
 		RepositoryService repositoryService = processEngine.getRepositoryService();
 		log.debug("repositoryService :"+ repositoryService);
@@ -89,5 +91,6 @@ public class ProcessService {
 
 		org.activiti.engine.runtime.ProcessInstance processInstance = runtimeService.startProcessInstanceByKey(workflowInfo.getName());
 		return null;
+		*/
     }
 }
