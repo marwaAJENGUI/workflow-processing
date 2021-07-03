@@ -31,9 +31,17 @@ spring:
     # - **.bpmn20.xml
     asyncExecutorActivate: true
     history-level: audit
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    hibernate:
+      ddl-auto: update
+  data:
+    rest:
+      basePath: /api
 logging:  level:
     com.example.workflow:
       DEBUG
+  file: F:/pfe/log/log.log
 topic: workflow
       #?consumer.retroactive=true
 server:

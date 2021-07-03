@@ -9,7 +9,7 @@ import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
 
 import com.example.workflow.model.Actions;
-import com.example.workflow.model.BroadcastMessage;
+import com.example.workflow.model.WorkflowInfo;
 import com.example.workflow.services.ProcessService;
 
 import javax.jms.Message;
@@ -29,14 +29,14 @@ public class JmsConsumer implements MessageListener {
         try{
         	log.debug(">>>>>JmsConsumer.onMessage(Message message) --> Start");
             ObjectMessage objectMessage = (ObjectMessage)message;
-            BroadcastMessage broadcastMessage = (BroadcastMessage)objectMessage.getObject();
+            WorkflowInfo workflowInfo = (WorkflowInfo)objectMessage.getObject();
             //do additional processing
             log.info(">>>>> Received Message from Topic: "+
-            		broadcastMessage.toString()
+            		workflowInfo.toString()
             );
             log.info(Actions.CREATE_AND_START_WORKFLOW.toString());
-            if (broadcastMessage.getWorkflowInfo().getAction().equals(Actions.CREATE_AND_START_WORKFLOW.toString())) {
-            	ProcessInstance processInstance = processService.startProcess(broadcastMessage.getWorkflowInfo());
+            if (workflowInfo.getAction().equals(Actions.CREATE_AND_START_WORKFLOW.toString())) {
+            	ProcessInstance processInstance = processService.startProcess(workflowInfo);
             	log.info(">>>>>> ProcessInstance: "+processInstance);
             }
         } catch(Exception e) {
