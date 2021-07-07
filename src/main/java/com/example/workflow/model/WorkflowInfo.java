@@ -26,6 +26,7 @@ public class WorkflowInfo implements Serializable{
 	boolean draft;
 	String action;
 	String extension;
+	String processDefinitionId;
 
 
 public String getDirPath(){

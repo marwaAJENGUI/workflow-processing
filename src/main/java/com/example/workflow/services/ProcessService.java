@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipInputStream;
 
@@ -26,24 +27,27 @@ import org.activiti.engine.RepositoryService;
 import org.activiti.engine.impl.persistence.entity.DeploymentEntity;
 import org.activiti.engine.ProcessEngines;
 import org.activiti.engine.RuntimeService;
+import org.activiti.engine.TaskService;
+import org.activiti.engine.task.Task;
 import lombok.extern.log4j.Log4j;
 @Log4j
 @Service
 public class ProcessService {
 
-    @Autowired
-    private ProcessRuntime processRuntime;
+
     @Autowired
     private FileService fileService;
+    //@Autowired
+    //private ProcessEngine processEngine;
     @Autowired
-    ProcessEngine processEngine;
+    private RepositoryService repositoryService;
     @Autowired
-    ResourceLoader resourceLoder;
+    private TaskService taskService;
     @Autowired
-    RepositoryService repositoryService;
+    private ProcessRuntime processRuntime;
     //ApplicationContext applicationContext;
     //@Deployment(resources = { "/JobCollectionResourceTest.testTimerProcess.bpmn20.xml" })
-    public ProcessInstance startProcess(WorkflowInfo workflowInfo) throws FileNotFoundException, InterruptedException {
+    public String startProcess(WorkflowInfo workflowInfo) throws FileNotFoundException, InterruptedException {
     	log.debug(">>>>>>>>>>> ProcessService -> : startProcess(workflowInfo): start ...");
     	String localFilePath=fileService.copyXmlFile(workflowInfo.getFilePath(),workflowInfo.getDirPath());
 		//ZipInputStream inputStream = new ZipInputStream(new FileInputStream(localFilePath));
@@ -59,12 +63,11 @@ public class ProcessService {
 			  .addClasspathResource(workflowInfo.getFilePath())
 			  .deploy();
     	log.info(">>>>>>>>>>> ProcessService -> : startProcess(workflowInfo): DeploymentEntity deployment = "+deployment);
-		
-		return processRuntime.start(ProcessPayloadBuilder
+    	return processRuntime.start(ProcessPayloadBuilder
 				.start()
 				.withProcessDefinitionKey(workflowInfo.getName())
                 .build()
-                );
+                ).getProcessDefinitionId();
 		
 		/*
 		processEngine = ProcessEngines.getDefaultProcessEngine();
@@ -93,4 +96,15 @@ public class ProcessService {
 		return null;
 		*/
     }
+	// fetch task assigned to employee
+	public List<Task> getTasks(String assignee,String processDefinitionId) {
+		return taskService.createTaskQuery()
+				.processDefinitionId(processDefinitionId)
+				.taskAssignee(assignee).list();
+	}
+
+	// complete the task
+	public void completeTask(String taskId) {
+		taskService.complete(taskId);
+	}
 }
