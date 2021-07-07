@@ -60,7 +60,7 @@ public class UserController {
 	
 	@DeleteMapping("/{id}")
 	@ResponseBody
-    public boolean removeadCategory(@PathVariable("id") Long id){
+    public boolean removeUser(@PathVariable("id") Long id){
 		return userService.removeUser(id);
     }
 }
