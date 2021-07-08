@@ -9,6 +9,8 @@ import java.util.concurrent.TimeUnit;
 import org.activiti.api.process.model.ProcessInstance;
 import org.activiti.api.process.model.builders.ProcessPayloadBuilder;
 import org.activiti.api.process.runtime.ProcessRuntime;
+
+import com.example.workflow.config.SecurityUtil;
 import com.example.workflow.model.WorkflowInfo;
 
 import org.activiti.engine.RepositoryService;
@@ -29,14 +31,15 @@ public class ProcessService {
     private TaskService taskService;
     @Autowired
     private ProcessRuntime processRuntime;
-
+    @Autowired
+    private SecurityUtil securityUtil;
     public String startProcess(WorkflowInfo workflowInfo) throws FileNotFoundException, InterruptedException {
     	log.debug(">>>>>>>>>>> ProcessService -> : startProcess(workflowInfo): start ...");
     	String localFilePath=fileService.copyXmlFile(workflowInfo.getFilePath(),workflowInfo.getDirPath());
 		log.info("Manual Debug 1 ==>"  + workflowInfo.getFilePath());
 		log.info("Manual Debug 2 ==>");
 		TimeUnit.SECONDS.sleep(15);
-		 org.activiti.engine.impl.identity.Authentication.setAuthenticatedUserId("admin");
+		securityUtil.logInAs("admin");
 		DeploymentEntity deployment=(DeploymentEntity)repositoryService.createDeployment()
 			  .addClasspathResource(workflowInfo.getFilePath())
 			  .deploy();
@@ -66,17 +69,17 @@ public class ProcessService {
     
 	// fetch task assigned to user
 	public List<Task> getUserProcessTasks(String assignee,String processDefinitionId) {
-		 org.activiti.engine.impl.identity.Authentication.setAuthenticatedUserId(assignee);
+		securityUtil.logInAs(assignee);
 		return taskService.createTaskQuery()
 				.processDefinitionId(processDefinitionId)
-				//.active()
+				.active()
 				//.taskAssignee(assignee)
 				.list();
 	}
 
 	// complete the task
 	public void completeTask(String taskId) {
-		 org.activiti.engine.impl.identity.Authentication.setAuthenticatedUserId("admin");
+		securityUtil.logInAs("admin");
 		taskService.complete(taskId);
 	}
 }

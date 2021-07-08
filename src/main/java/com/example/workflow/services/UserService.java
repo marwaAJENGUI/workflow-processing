@@ -8,18 +8,22 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.stereotype.Service;
 
 import com.example.workflow.config.MyUserDetails;
-import com.example.workflow.config.MyUserDetailsService;
 import com.example.workflow.model.User;
 import com.example.workflow.repository.UserRepository;
+
+import lombok.extern.log4j.Log4j;
+@Log4j
 @Service
-public class UserService {
+public class UserService /* implements UserDetailsService*/{
 	@Autowired
 	UserRepository userRepository;
-	@Autowired
-	MyUserDetailsService userDetailsService;
+
 	public Optional<User> getUserByUsername(String username) { 
         return userRepository.findByUsername(username);
 	}
@@ -60,4 +64,22 @@ public class UserService {
 	    	}
     	return userDetails;
     }
+    public UserDetails getUserDetails(User user) {
+    	MyUserDetails userDetails=null;
+    	if (user!=null) {
+	    	userDetails.setUserName(user.getUsername());
+	    	userDetails.setPassword(user.getPassword());
+	    	userDetails.setAuthorities (Arrays.stream(user.getRole().split(","))
+	                    .map(SimpleGrantedAuthority::new)
+	                    .collect(Collectors.toList()));
+	    	}
+    	return userDetails;
+    }
+/*
+	@Override
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		return getUserDetailsByUsername(username);
+	}
+*/
+
 }
